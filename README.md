@@ -1,1 +1,1 @@
-# anime_recomend
+# anime_recommend
