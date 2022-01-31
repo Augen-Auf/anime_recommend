@@ -2,7 +2,9 @@
 
 # dependencies
 node_modules
-/build
+venv
+__pycache__
+build
 .pnp
 .idea
 .pnp.js
