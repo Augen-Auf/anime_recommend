@@ -1,5 +1,6 @@
 from flask import Flask
 import os
+from src.auth import auth
 
 
 def create_app(test_config=None):
@@ -12,8 +13,9 @@ def create_app(test_config=None):
             SECRET_KEY=os.environ.get("SECRET_KEY"),
 
         )
-
     else:
         app.config.from_mapping(test_config)
+
+    app.register_blueprint(auth)
 
     return app
