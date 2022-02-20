@@ -7,7 +7,9 @@ function App() {
   return (
     <BrowserRouter>
         <Navbar/>
-        <AppRouter/>
+        <div className="w-screen mt-12">
+            <AppRouter/>
+        </div>
     </BrowserRouter>
   );
 }
