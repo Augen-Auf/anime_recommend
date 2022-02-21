@@ -19,7 +19,7 @@ const Navbar = () => {
     return (
         <div className="navbar mb-2 shadow-lg bg-neutral text-neutral-content">
             <div className="flex-1 hidden px-2 mx-2 lg:flex">
-                <span className="text-lg font-bold text-red-400">Anime Recommendation</span>
+                <span className="text-lg font-bold text-purple-400">Anime Recommendation</span>
             </div>
 
             {

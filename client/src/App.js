@@ -1,12 +1,16 @@
-import {useState} from "react";
 import Navbar from "./components/navbar";
+import {BrowserRouter} from "react-router-dom";
+import AppRouter from "./components/app-router";
 
 function App() {
 
   return (
-    <div>
+    <BrowserRouter>
         <Navbar/>
-    </div>
+        <div className="max-w-screen mt-12">
+            <AppRouter/>
+        </div>
+    </BrowserRouter>
   );
 }
 
