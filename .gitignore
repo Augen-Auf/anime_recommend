@@ -9,7 +9,7 @@ build
 .idea
 .pnp.js
 .env
-server/.env
+/server/.env
 
 # testing
 /client/coverage
