@@ -1,6 +1,7 @@
 import axios from "axios"
 
-const $host = axios.create({
+const $api = axios.create({
+    withCredentials: true,
     baseURL: process.env.REACT_APP_API_URL
 })
 
@@ -9,13 +10,12 @@ const $authHost = axios.create({
 })
 
 const autoInterceptor = config => {
-    config.headers.authorization = `Bearer ${localStorage.getItem('token')}`
+    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`
     return config
 }
 
 $authHost.interceptors.request.use(autoInterceptor)
 
 export {
-    $host,
-    $authHost
+    $api
 }

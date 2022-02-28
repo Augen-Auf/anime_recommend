@@ -1,11 +1,16 @@
-import React, {Fragment, useState} from 'react';
+import React, {Fragment, useContext, useState} from 'react';
 import AuthModal from "../auth-modal";
-
-const isLoginUser = false
+import AvatarLabel from "../avatar-label";
+import {MAIN_PAGE} from "../../utils/consts";
+import {Link} from "react-router-dom";
+import {observer} from "mobx-react-lite";
+import {useAuth} from "../../contexts/AuthContext";
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false)
     const [isLogin, setIsLogin] = useState(true)
+
+    const {store} = useAuth()
 
     function openModal(isOpenLoginForm) {
         setIsLogin(isOpenLoginForm)
@@ -16,20 +21,20 @@ const Navbar = () => {
         setIsOpen(false);
     }
 
+
     return (
         <div className="navbar mb-2 shadow-lg bg-neutral text-neutral-content">
             <div className="flex-1 hidden px-2 mx-2 lg:flex">
-                <span className="text-lg font-bold text-purple-400">Anime Recommendation</span>
+                <Link to={MAIN_PAGE}
+                      className="text-lg font-bold text-purple-400 hover:text-purple-600 transition-colors duration-150">
+                    Anime Recommendation
+                </Link>
             </div>
 
             {
-                isLoginUser ?
-                    <div className="flex-none">
-                        <div className="avatar">
-                            <div className="rounded-full w-10 h-10 m-1">
-                                <img src="https://i.pravatar.cc/500?img=32"/>
-                            </div>
-                        </div>
+                store.isAuth ?
+                    <div className="px-5">
+                    <AvatarLabel/>
                     </div>
                     :
                     <div className="flex-none hidden px-2 mx-2 lg:flex">
@@ -47,4 +52,4 @@ const Navbar = () => {
         </div>);
 };
 
-export default Navbar;
+export default observer(Navbar);

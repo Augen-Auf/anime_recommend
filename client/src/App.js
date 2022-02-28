@@ -1,6 +1,8 @@
 import Navbar from "./components/navbar";
 import {BrowserRouter} from "react-router-dom";
 import AppRouter from "./components/app-router";
+import {observer} from "mobx-react-lite";
+
 
 function App() {
 
@@ -14,4 +16,4 @@ function App() {
   );
 }
 
-export default App;
+export default observer(App);

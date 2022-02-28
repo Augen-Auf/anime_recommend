@@ -41,8 +41,8 @@ const AuthModal = ({isLogin, isOpen, closeModal}) => {
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                     >
-                        <div className="inline-block w-full bg-red-400 max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform shadow-xl rounded-2xl">
-                            {isLogin ? <LoginForm/> : <RegistrationForm/>}
+                        <div className="inline-block w-full bg-purple-400 max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform shadow-xl rounded-2xl">
+                            {isLogin ? <LoginForm closeModal={closeModal}/> : <RegistrationForm closeModal={closeModal}/>}
                         </div>
                     </Transition.Child>
                 </div>

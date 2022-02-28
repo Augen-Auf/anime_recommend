@@ -8,6 +8,7 @@ build
 .pnp
 .idea
 .pnp.js
+.env
 
 # testing
 /client/coverage
