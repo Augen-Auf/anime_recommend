@@ -1,15 +1,16 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import AnimeCard from "../anime-card";
+import AnimeService from "../../services/AnimeService"
 
 const MainPage = () => {
-    const { pageYOffset } = window;
-    const [visible, setVisible] = useState(false)
-    const [selectedItem, setSelectedItem] = useState(null)
 
-    const openSpeedDial = (itemId) => {
-        setSelectedItem(itemId)
-        setVisible(true)
-    }
+    const [animeList, setAnimeList] = useState([])
+    const [page, setPage] = useState(1)
+    useEffect(async () => {
+        const { data: {data: animeArray} } = await AnimeService.fetchAnimeList(2)
+        setAnimeList(animeArray)
+        console.log(animeArray)
+    }, [])
 
 
     return (
@@ -46,8 +47,8 @@ const MainPage = () => {
                 </ul>
                 <div className="w-4/5 grid grid-cols-2 gap-10">
                     {
-                        [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ].map(item =>
-                            <AnimeCard key={"anime_card_" + item}/>
+                        animeList.length > 0 && animeList.map(anime =>
+                            <AnimeCard key={"anime_card_" + anime.mal_id} item={anime}/>
                         )
                     }
                 </div>

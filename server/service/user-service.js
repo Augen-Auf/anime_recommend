@@ -39,6 +39,21 @@ class UserService {
         return { ...tokens, user: userDto}
     }
 
+    async updateProfile(id, email, username, avatar) {
+        const user = await UserModel.findOne({_id: id})
+        if (!user) {
+            throw ApiError.BadRequest('Пользователя не найден')
+        }
+
+        const newUser = await user.update({email, username})
+
+        const userDto = new UserDto(newUser)
+        const tokens = tokenService.generateTokens({...userDto})
+        await tokenService.saveToken(userDto.id, tokens.refreshToken)
+
+        return { ...tokens, user: userDto}
+    }
+
     async logout(refreshToken) {
         const token = tokenService.removeToken(refreshToken)
         return token
@@ -62,10 +77,6 @@ class UserService {
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
 
         return { ...tokens, user: userDto}
-    }
-
-    async getAllUsers() {
-        return await UserModel.find()
     }
 }
 

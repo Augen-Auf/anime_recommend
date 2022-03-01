@@ -1,10 +1,19 @@
-import React from 'react';
+import React, {useState} from 'react';
 import AnimeCard from "../anime-card";
 import {observer} from "mobx-react-lite";
 import {useAuth} from "../../contexts/AuthContext";
+import axios from "axios";
 
 const ProfilePage = () => {
     const {store} = useAuth()
+    const [avatar, setAvatar] = useState(null)
+
+    const uploadAvatar = async (e) => {
+        e.preventDefault()
+        const form = new FormData()
+        form.append('avatar', avatar)
+        await axios.post('http://localhost:5000/api/avatar/upload', form, {headers: {'Content-Type': 'multipart/form-data'}})
+    }
     return (
         <div className="mx-auto space-y-14">
             <div className="space-y-5">
@@ -23,16 +32,20 @@ const ProfilePage = () => {
                 </div>
             </div>
             <div className="divider"/>
-            <div className="space-y-5">
-                <p className="font-semibold text-xl text-purple-400 text-center">Просмотренное аниме</p>
-                <div className="grid grid-cols-2 gap-10 w-4/5 mx-auto">
-                    {
-                        [1,2,3,4,5,6,7,8,9].map(item =>
-                            <AnimeCard key={`anime_card_${item}`}/>
-                        )
-                    }
-                </div>
-            </div>
+            <form onSubmit={uploadAvatar}>
+                <input type="file" name="avatar" onChange={(e) => setAvatar(e.target.files[0])}/>
+                <button type="submit" className="btn btn-primary">Загрузить аватар</button>
+            </form>
+            {/*<div className="space-y-5">*/}
+            {/*    <p className="font-semibold text-xl text-purple-400 text-center">Просмотренное аниме</p>*/}
+            {/*    <div className="grid grid-cols-2 gap-10 w-4/5 mx-auto">*/}
+            {/*        {*/}
+            {/*            [1,2,3,4,5,6,7,8,9].map(item =>*/}
+            {/*                <AnimeCard key={`anime_card_${item}`}/>*/}
+            {/*            )*/}
+            {/*        }*/}
+            {/*    </div>*/}
+            {/*</div>*/}
         </div>
     );
 };
