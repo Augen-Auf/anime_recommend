@@ -21,7 +21,8 @@ class AvatarService {
             throw ApiError.BadRequest('Пользователя не найден')
         }
 
-        const newUser = await user.update({avatar: key})
+        const newUser = Object.assign(user, {avatar: key})
+        newUser.save()
 
         const userDto = new UserDto(newUser)
         const tokens = tokenService.generateTokens({...userDto})

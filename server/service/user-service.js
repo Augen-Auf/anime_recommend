@@ -39,14 +39,35 @@ class UserService {
         return { ...tokens, user: userDto}
     }
 
-    async updateProfile(id, email, username, avatar) {
+    async updateProfile(id, email, username) {
         const user = await UserModel.findOne({_id: id})
         if (!user) {
             throw ApiError.BadRequest('Пользователя не найден')
         }
+        const newUser = Object.assign(user, {email, username})
+        newUser.save()
+        const userDto = new UserDto(newUser)
+        const tokens = tokenService.generateTokens({...userDto})
+        await tokenService.saveToken(userDto.id, tokens.refreshToken)
 
-        const newUser = await user.update({email, username})
+        return { ...tokens, user: userDto}
+    }
 
+    async updatePassword(id, oldPassword, newPassword) {
+        const user = await UserModel.findOne({_id: id})
+
+        if (!user) {
+            throw ApiError.BadRequest('Пользователя не найден')
+        }
+
+        const isPassEquals = await bcrypt.compare(oldPassword, user.password)
+        if (!isPassEquals) {
+            throw ApiError.BadRequest('Указанный старый пароль не совпадает с текущим')
+        }
+
+        const hashPassword = await bcrypt.hash(newPassword, 3)
+        const newUser = Object.assign(user, {password: hashPassword})
+        newUser.save()
         const userDto = new UserDto(newUser)
         const tokens = tokenService.generateTokens({...userDto})
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
@@ -64,7 +85,7 @@ class UserService {
         {
             throw ApiError.UnauthorizedError()
         }
-        
+
         const userData = tokenService.validateRefreshToken(refreshToken)
         const tokenFromDb = await tokenService.findToken(refreshToken)
         if(!userData || !tokenFromDb) {

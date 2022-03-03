@@ -20,8 +20,8 @@ const AvatarLabel = () => {
                 <div className="avatar">
                     <div className="mask mask-circle bg-purple-400 h-12 w-12 bg-opacity-10">
                         <img
-                        src="https://api.lorem.space/image/face?hash=28212" alt="Avatar Tailwind CSS Component"
-                        className="mask mask-circle"/>
+                            src={store.user?.avatar && process.env.REACT_APP_API_URL + '/avatar/' + store.user?.avatar}
+                            className="mask mask-circle bg-purple-400"/>
                     </div>
                 </div>
                 <Link to={PROFILE} className="text-purple-400 font-semibold leading-none mb-1 hover:text-purple-600 transition-colors duration-150">

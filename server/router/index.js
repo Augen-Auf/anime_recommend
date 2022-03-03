@@ -12,17 +12,17 @@ router.post('/registration',
     body('email').isEmail(),
     body('password').isLength({min: 3, max: 32}),
     userController.registration)
-router.post('/login', userController.login)
+router.post('/login', body('email').isEmail(), userController.login)
 router.post('/logout', userController.logout)
 router.get('/refresh', userController.refresh)
-router.get('/users', authMiddleware, userController.getUsers)
-router.post('/user/update', userController.updateProfile)
+router.post('/user/update', body('email').isEmail(), userController.updateProfile)
+router.post('/password/update', userController.updatePassword)
 
 router.get('/anime', animeController.getAnimeList)
 
 router.get('/avatar/:key', avatarController.getAvatar)
 
-router.post('avatar/upload', multerS3Uploader.single('avatar'))
+router.post('/avatar/upload', multerS3Uploader.single('avatar'), avatarController.uploadAvatar)
 
 
 module.exports = router

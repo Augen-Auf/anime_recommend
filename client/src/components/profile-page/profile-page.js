@@ -23,7 +23,7 @@ const ProfilePage = () => {
                     <div className="flex flex-col justify-center items-center px-10">
                         <div className="avatar">
                             <div className="w-40 h-40 rounded-full">
-                                <img src="https://api.lorem.space/image/face?hash=28212"/>
+                                <img src={store.user?.avatar && process.env.REACT_APP_API_URL + '/avatar/' + store.user.avatar}/>
                             </div>
                         </div>
                         <span className="font-bold text-2xl text-purple-400">{store.user?.username}</span>
