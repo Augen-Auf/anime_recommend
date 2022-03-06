@@ -8,8 +8,6 @@ const AnimeCard = ({item={}}) => {
         {
             const {images: {jpg: {image_url}}, title, title_english, synopsis, score} = item
             setAnimeObj({image_url, title, title_english, synopsis, score})
-
-            testCode
         }
     }, [item])
     return (
