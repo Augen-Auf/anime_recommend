@@ -10,6 +10,7 @@ build
 .pnp.js
 .env
 /server/.env
+/rec-sys/SVD_Data
 
 # testing
 /client/coverage
