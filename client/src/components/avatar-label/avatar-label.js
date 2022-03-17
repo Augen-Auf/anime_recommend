@@ -18,10 +18,10 @@ const AvatarLabel = () => {
         <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2">
                 <div className="avatar">
-                    <div className="mask mask-circle bg-purple-400 h-12 w-12 bg-opacity-10">
+                    <div className="rounded-full bg-purple-400 h-12 w-12 ring-2 ring-secondary">
                         <img
                             src={store.user?.avatar && process.env.REACT_APP_API_URL + '/avatar/' + store.user?.avatar}
-                            className="mask mask-circle bg-purple-400"/>
+                            className=""/>
                     </div>
                 </div>
                 <Link to={PROFILE} className="text-purple-400 font-semibold leading-none mb-1 hover:text-purple-600 transition-colors duration-150">

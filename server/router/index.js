@@ -18,7 +18,15 @@ router.get('/refresh', userController.refresh)
 router.post('/user/update', body('email').isEmail(), userController.updateProfile)
 router.post('/password/update', userController.updatePassword)
 
-router.get('/anime', animeController.getAnimeList)
+router.post('/anime', animeController.getAnimeList)
+router.post('/user/anime/update', animeController.setAnimeToList)
+router.post('/user/anime/get', animeController.getUserAnimeList)
+router.post('/anime/user/get', animeController.getUserAnimeListItems)
+router.get('/anime/search', animeController.searchAnime)
+router.post('/anime/recommendations', animeController.getAnimeRecommendations)
+router.post('user/anime/rating', animeController.setAnimeRating)
+
+router.get('/test/anime/:id', animeController.testAnime)
 
 router.get('/avatar/:key', avatarController.getAvatar)
 

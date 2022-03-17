@@ -1,4 +1,5 @@
 import axios from "axios"
+const CancelToken = axios.CancelToken;
 
 const $api = axios.create({
     withCredentials: true,
@@ -16,7 +17,12 @@ $api.interceptors.response.use(
     config => config,
     async error => {
         const originalRequest = error.config
-        if(error.response.status === 401 && error.config && !error.config._isRetry) {
+        if(axios.isCancel(error))
+        {
+            console.log('Request canceled', error.message);
+            return {data: []}
+        }
+        if (error.response.status === 401 && error.config && !error.config._isRetry) {
             originalRequest._isRetry = true
             try {
                 const response = await axios.get(
@@ -28,11 +34,11 @@ $api.interceptors.response.use(
             } catch (e) {
                 console.log('Пользователь неавторизован')
             }
-
         }
         throw error
     })
 
 export {
-    $api
+    $api,
+    CancelToken
 }
