@@ -38,6 +38,7 @@ def get_top_n(user_id, n=10):
     return data_pred.sort_values(by=['rating'], ascending=False)[:n]
 
 
+
 def train_model(user_id, anime_ratings):
     full_df = rate_df.merge(anime_df, how='left', left_on=['anime_id'], right_on=['anime_id'])
     df = full_df[full_df['rating_x'] != -1]
@@ -64,6 +65,5 @@ def make_predict(user_id):
     global algo
     algo = pickle.load(open(filename, 'rb'))
     predictions = get_top_n(user_id)
-    print(predictions['anime_id'].tolist())
     return predictions['anime_id'].tolist()
 
