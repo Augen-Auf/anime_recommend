@@ -13,7 +13,7 @@ build
 
 # testing
 /client/coverage
-/rec-sys/SVD_Data
+/rec-sys/SVD_data
 
 # production
 /build
