@@ -7,6 +7,8 @@ import Loader from "react-spinners/BeatLoader";
 const RecommendationPage = () => {
     const {store} = useAuth()
     const [recAnimeList, setRecAnimeList] = useState([])
+    const [userViewedList, setUserViewedList] = useState([])
+    const [userSavedList, setUserSavedList] = useState([])
 
     useEffect(async () => {
         if(store.user) {
@@ -14,6 +16,28 @@ const RecommendationPage = () => {
             setRecAnimeList(data.list)
         }
     }, [store.user])
+
+    useEffect(async () => {
+        if (store.user) {
+            const {data: {viewed, saved}} = await AnimeService.getUserAnimeList(store.user.id)
+            if (saved) {
+                setUserSavedList(saved)
+            }
+            if (viewed) {
+                setUserViewedList(viewed)
+            }
+        }
+    }, [recAnimeList, store.user])
+
+    const updateUserAnimeList = async (animeId, list) => {
+        const {data: {viewed, saved}} = await AnimeService.setUserAnimeList(store.user.id, animeId, list)
+        if (saved) {
+            setUserSavedList(saved)
+        }
+        if (viewed) {
+            setUserViewedList(viewed)
+        }
+    }
 
     return (
         <div className="px-12 mx-auto">
@@ -26,7 +50,9 @@ const RecommendationPage = () => {
                                  recAnimeList.map(anime =>
                                         <AnimeCard key={"anime_card_" + anime.mal_id}
                                                    item={anime}
-                                                   onAnimeStateChanged={(animeId, list) => console.log('state update')}/>
+                                                   viewed={userViewedList.includes(anime.mal_id)}
+                                                   saved={userSavedList.includes(anime.mal_id)}
+                                                   onAnimeStateChanged={(animeId, list) => updateUserAnimeList(animeId, list)}/>
                                     )
                             }
                         </div> :

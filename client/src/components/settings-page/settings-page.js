@@ -6,7 +6,7 @@ import {observer} from "mobx-react-lite";
 import {useAuth} from "../../contexts/AuthContext";
 import {useNavigate} from "react-router-dom";
 import {MAIN_PAGE} from "../../utils/consts";
-import {DownloadIcon} from "@heroicons/react/solid";
+import {DownloadIcon, UploadIcon} from "@heroicons/react/solid";
 import {RefreshIcon, XIcon} from "@heroicons/react/outline";
 import {shallowEqual} from "../../utils/functions";
 import {toast} from "react-toastify";
@@ -100,7 +100,7 @@ const SettingsPage = () => {
                     <div className="flex space-x-3 items-center">
                         <label className="cursor-pointer">
                             <span
-                                className="btn btn-secondary hover:bg-purple-600 hover:border-purple-600"><DownloadIcon className="h-6 w-6"/></span>
+                                className="btn btn-secondary hover:bg-purple-600 hover:border-purple-600"><UploadIcon className="h-6 w-6"/></span>
                             <input type='file' className="hidden" onChange={(e) => updateAvatar(e.target.files[0])}/>
                         </label>
                         {
@@ -111,7 +111,7 @@ const SettingsPage = () => {
                     </div>
                 </div>
                 <hr className="border-t-2 border-gray-400 w-full"/>
-                <form key={1} className="w-full space-y-3" onSubmit={handleSubmit(updateUserData)}>
+                <form key={1} className="w-full space-y-3 flex flex-col items-center" onSubmit={handleSubmit(updateUserData)}>
                     <p className="text-lg text-secondary font-semibold w-full text-center">Данные профиля</p>
                     <div className="form-control w-full">
                         <label className="label">
@@ -152,7 +152,7 @@ const SettingsPage = () => {
                     </button>
                 </form>
                 <hr className="border-t-2 border-gray-400 w-full"/>
-                <form key={2} className="w-full space-y-2" onSubmit={handleSubmit2(updateUserPassword)}>
+                <form key={2} className="w-full space-y-2 flex flex-col items-center" onSubmit={handleSubmit2(updateUserPassword)}>
                     <p className="text-lg font-semibold w-full text-center text-secondary">Новый пароль</p>
                     <div className="form-control w-full">
                         <label className="label">

@@ -27,6 +27,7 @@ def make_recommend(user_data: UserData):
 
 @app.post('/make-recommend')
 def make_recommend(user_data: UserData):
+    print(user_data.user_id)
     predictions = SVD_prediction.make_predict(user_data.user_id)
     return predictions
 

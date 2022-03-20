@@ -2,6 +2,8 @@ import pandas as pd
 import seaborn as sns
 import pickle
 from surprise import Dataset, Reader, SVD
+from surprise.model_selection import train_test_split
+from surprise import accuracy
 
 sns.set_style("darkgrid")
 
@@ -30,13 +32,11 @@ def save_to_csv(df):
 def get_top_n(user_id, n=10):
     data_pred = []
     for row in anime_df.itertuples():
-        print(row)
-        tmp_pred = algo.predict(user_id, row[1])
-        data_pred.append((tmp_pred[0], tmp_pred[1], tmp_pred[3]))
+        est_score = algo.predict(user_id, row[1]).est
+        data_pred.append((user_id, row[1], est_score))
     data_pred = pd.DataFrame(data_pred, columns=['user_id', 'anime_id', 'rating'])
 
     return data_pred.sort_values(by=['rating'], ascending=False)[:n]
-
 
 
 def train_model(user_id, anime_ratings):
@@ -57,13 +57,17 @@ def train_model(user_id, anime_ratings):
     reader = Reader(rating_scale=(0, 10))
     data = Dataset.load_from_df(df, reader)
 
-    algo.fit(data.build_full_trainset())
-    pickle.dump(algo, open(filename, 'wb'))
+    trainset, testset = train_test_split(data, test_size=0.25)
+    predictions = algo.fit(trainset).test(testset)
+    print(accuracy.rmse(predictions))
+    # algo.fit(data.build_full_trainset())
+    # pickle.dump(algo, open(filename, 'wb'))
 
 
 def make_predict(user_id):
     global algo
     algo = pickle.load(open(filename, 'rb'))
     predictions = get_top_n(user_id)
+    print(predictions)
     return predictions['anime_id'].tolist()
 
