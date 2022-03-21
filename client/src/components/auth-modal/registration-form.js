@@ -37,12 +37,16 @@ const RegistrationForm = ({closeModal}) => {
                     <label className="label">
                         <span className="text-gray-700 font-semibold">Пароль</span>
                     </label>
-                    <input type="text"
+                    <input type="password"
                            placeholder="Пароль"
                            onChange={(e) => setPassword(e.target.value)}
                            className="input input-bordered bg-white text-purple-600"/>
                 </div>
-                <button className="btn bg-gray-700 w-full mt-6" onClick={registerUser}>Зарегистрироваться</button>
+                <button
+                    className="btn text-white hover:outline-none border-0 bg-gray-700 hover:bg-gray-800 w-full mt-6"
+                    onClick={registerUser}>
+                    Зарегистрироваться
+                </button>
             </div>
         </Fragment>
     );

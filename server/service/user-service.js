@@ -60,13 +60,19 @@ class UserService {
             throw ApiError.BadRequest('Пользователя не найден')
         }
 
-        const isPassEquals = await bcrypt.compare(oldPassword, user.password)
-        if (!isPassEquals) {
+        const isOldPassEquals = await bcrypt.compare(oldPassword, user.password)
+        if (!isOldPassEquals) {
             throw ApiError.BadRequest('Указанный старый пароль не совпадает с текущим')
+        }
+
+        const isNewPassEquals = await bcrypt.compare(newPassword, user.password)
+        if (isNewPassEquals) {
+            throw ApiError.BadRequest('Указанный новый пароль совпадает с текущим')
         }
 
         const hashPassword = await bcrypt.hash(newPassword, 3)
         const newUser = Object.assign(user, {password: hashPassword})
+
         newUser.save()
         const userDto = new UserDto(newUser)
         const tokens = tokenService.generateTokens({...userDto})

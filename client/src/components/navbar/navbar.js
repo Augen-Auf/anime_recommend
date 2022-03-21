@@ -23,7 +23,7 @@ const Navbar = () => {
 
 
     return (
-        <div className="navbar mb-2 shadow-lg bg-neutral text-neutral-content">
+        <div className="navbar shadow-lg bg-neutral text-neutral-content">
             <div className="flex-1 hidden px-2 mx-2 lg:flex">
                 <Link to={MAIN_PAGE}
                       className="text-lg font-bold text-purple-400 hover:text-purple-600 transition-colors duration-150">
@@ -38,11 +38,11 @@ const Navbar = () => {
                     </div>
                     :
                     <div className="flex-none hidden px-2 mx-2 lg:flex">
-                        <div className="flex items-stretch">
-                            <button className="btn  btn-ghost" onClick={() => openModal(true)}>
+                        <div className="flex items-center space-x-5">
+                            <button className="text-white font-semibold text-sm uppercase hover:text-secondary transition-colors duration-150 ease-in-out" onClick={() => openModal(true)}>
                                 Войти
                             </button>
-                            <button className="btn btn-ghost" onClick={() => openModal(false)}>
+                            <button className="text-white font-semibold text-sm uppercase hover:text-secondary transition-colors duration-150 ease-in-out" onClick={() => openModal(false)}>
                                 Зарегистрироваться
                             </button>
                         </div>

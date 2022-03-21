@@ -2,6 +2,7 @@ import {makeAutoObservable} from "mobx";
 import AuthService from "../services/AuthService";
 import axios from "axios";
 import UserService from "../services/UserService";
+import {toast} from "react-toastify";
 
 export default class Store {
     user = {}
@@ -55,23 +56,91 @@ export default class Store {
     }
 
     async updateProfileData(username, email) {
-        const {data} = await UserService.updateProfileData(this.user.id, username, email)
-        localStorage.setItem('token', data.accessToken)
-        this.setAuth(true)
-        this.setUser(data.user)
+        const id = toast.loading("Пожалуйста подождите...",{
+            position: "bottom-center",
+        })
+        try {
+            const {data} = await UserService.updateProfileData(this.user.id, username, email)
+            localStorage.setItem('token', data.accessToken)
+            this.setAuth(true)
+            this.setUser(data.user)
+
+            toast.update(id, { render: "Данные успешно изменены!",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                type: "success",
+                isLoading: false,
+            });
+        }
+        catch (e) {
+            toast.update(id,{ render: e.response.data.message,
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                type: "error",
+                isLoading: false,
+            });
+            throw(e)
+        }
     }
 
     async updateProfilePassword(oldPassword, newPassword) {
-        const { data } = await UserService.updateProfilePassword(this.user.id, oldPassword, newPassword)
+        const id = toast.loading("Пожалуйста подождите...",{
+            position: "bottom-center",
+        })
+        try {
+            const {data} = await UserService.updateProfilePassword(this.user.id, oldPassword, newPassword)
+            await toast.update(id, { render: "Пароль успешно изменен!",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                type: "success",
+                isLoading: false,
+            });
+        }
+        catch (e) {
+            toast.update(id,{ render: e.response.data.message,
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                type: "error",
+                isLoading: false,
+            });
+            throw(e)
+        }
     }
 
     async updateProfileAvatar(form) {
-        form.append('id', this.user.id)
-        const { data } = await UserService.updateProfileAvatar(form)
-        console.log(data.user)
-        localStorage.setItem('token', data.accessToken)
-        this.setAuth(true)
-        this.setUser(data.user)
+        const id = toast.loading("Пожалуйста подождите...",{
+            position: "bottom-center",
+        })
+        try {
+            form.append('id', this.user.id)
+            const {data} = await UserService.updateProfileAvatar(form)
+            console.log(data.user)
+            localStorage.setItem('token', data.accessToken)
+            this.setAuth(true)
+            this.setUser(data.user)
+
+            toast.update(id, { render: "Аватар успешно изменен!",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                type: "success",
+                isLoading: false,
+            });
+        }
+        catch (e) {
+            toast.update(id,{ render: e.response.data.message,
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                type: "error",
+                isLoading: false,
+            });
+            throw(e)
+        }
     }
 
     async logout() {

@@ -19,9 +19,16 @@ async def init_page():
     return {'message': 'hello world'}
 
 
+@app.post('/train-model')
+def make_recommend(user_data: UserData):
+    predictions = SVD_prediction.train_model(user_data.user_id, user_data.anime_ratings)
+    return predictions
+
+
 @app.post('/make-recommend')
 def make_recommend(user_data: UserData):
-    predictions = SVD_prediction.make_predict(user_data.user_id, user_data.anime_ratings)
+    print(user_data.user_id)
+    predictions = SVD_prediction.make_predict(user_data.user_id)
     return predictions
 
 
