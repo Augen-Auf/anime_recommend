@@ -145,7 +145,7 @@ const MainPage = () => {
                             <Loader color={"#C084FC"} size={30} speedMultiplier={1} />
                         </div>
                         :
-                        <div className="mx-auto w-full grid grid-cols-3 gap-x-3 gap-y-5 pb-16">
+                        <div className="mx-auto w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-x-3 gap-y-5 pb-16">
                             {
                                 animeList.length > 0 && animeList.map(anime =>
                                     <AnimeCard key={"anime_card_" + anime.mal_id}
@@ -159,12 +159,12 @@ const MainPage = () => {
                     }
                 </div>
             </div>
-            <div className="w-full flex justify-center">
+            <div className="max-w-screen px-3 flex justify-center overflow-hidden">
                 <Pagination
                     current={page}
                     onChange={changePage}
                     pageSize={25}
-                    className="flex space-x-7 pb-16"
+                    className="flex space-x-7 pb-16 mx-auto"
                     total={lastVisiblePage * 25}
                     locale={localeInfo}
                     itemRender={itemRender}/>

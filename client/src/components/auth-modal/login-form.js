@@ -34,7 +34,11 @@ const LoginForm = ({closeModal}) => {
                         placeholder="Пароль"
                         className="input input-bordered bg-white text-purple-600"/>
                 </div>
-                <button className="btn bg-gray-700 w-full mt-6" onClick={loginUser}>Войти</button>
+                <button
+                    className="btn text-white hover:outline-none border-0 bg-gray-700 hover:bg-gray-800 w-full mt-6"
+                    onClick={loginUser}>
+                    Войти
+                </button>
             </div>
         </Fragment>
     );

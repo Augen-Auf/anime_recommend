@@ -31,7 +31,7 @@ const AnimeCard = ({item={}, saved = false, viewed = false, mode="default", onAn
 
     return (
         <div className="sm:max-w-xl sm:mx-auto">
-            <div className="bg-white shadow-lg border-gray-100 h-64	border sm:rounded-3xl p-5 flex space-x-8">
+            <div className="bg-white shadow-lg border-gray-100 h-64	border rounded-3xl p-5 flex space-x-8">
                 <div className="h-full w-2/5">
                     <img className="rounded-3xl shadow-lg h-full w-full object-cover"
                          src={animeObj?.image_url}

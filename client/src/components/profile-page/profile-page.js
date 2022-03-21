@@ -13,7 +13,7 @@ const ProfilePage = () => {
     const [cancelToken, setCancelToken] = useState(undefined)
     const navigate = useNavigate()
     const [activeTab, setActiveTab] =  useState('viewed')
-    const [activeList, setActiveList] =  useState([])
+    const [activeList, setActiveList] =  useState(null)
     const [userViewedList, setUserViewedList] = useState([])
     const [userSavedList, setUserSavedList] = useState([])
 
@@ -35,7 +35,7 @@ const ProfilePage = () => {
                 const token = CancelToken.source()
                 setCancelToken(token)
 
-                setActiveList([])
+                setActiveList(null)
                 const {data: {list = []}} = await AnimeService.getUserAnimeListItems(store.user.id, activeTab, token)
                 setActiveList(list)
             }
@@ -68,7 +68,7 @@ const ProfilePage = () => {
     }
 
     return (
-        <div className="mx-auto space-y-14 px-20">
+        <div className="mx-auto space-y-14 sm:px-20 px-5">
             <div className="space-y-5">
                 <p className="font-semibold text-xl text-purple-400 text-center">Профиль пользователя</p>
                 <div className="flex justify-center items-center">
@@ -100,8 +100,9 @@ const ProfilePage = () => {
                 </div>
             </div>
             {
-                activeList.length > 0 ?
-            <div className="w-full grid grid-cols-3 gap-5 pb-16">
+                activeList !== null ?
+                    activeList.length > 0 ?
+            <div className="mx-auto w-full grid xl:grid-cols-3 lg:grid-cols-2 grid-cols-1 gap-x-3 gap-y-5 pb-16">
                 {
                     activeList.map(anime =>
                         <AnimeCard key={"anime_card_" + anime.mal_id}
@@ -113,6 +114,8 @@ const ProfilePage = () => {
                     )
                 }
             </div>
+                        :
+                        <p className="text-center text-white font-semibold">Тут ничего пока нет</p>
                     :
                     <div className="mx-auto w-fit pb-16">
                         <Loader color={"#C084FC"} size={30} speedMultiplier={1} />
