@@ -24,7 +24,11 @@ export default class AuthService {
         return await $api.post('/anime/recommendations', {userId})
     }
 
-    static async setAnimeRating(userId, animeId, rating) {
+    static async setUserRating(userId, animeId, rating) {
         return await $api.post('/user/anime/rating', {userId, animeId, rating})
+    }
+
+    static async getUserRatings(userId) {
+        return await $api.post('/user/anime/ratings', {userId})
     }
 }

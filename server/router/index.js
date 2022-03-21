@@ -23,7 +23,8 @@ router.post('/user/anime/update', animeController.setAnimeToList)
 router.post('/user/anime/get', animeController.getUserAnimeList)
 router.post('/anime/user/get', animeController.getUserAnimeListItems)
 router.post('/anime/recommendations', animeController.getAnimeRecommendations)
-router.post('user/anime/rating', animeController.setAnimeRating)
+router.post('/user/anime/rating', animeController.setAnimeRating)
+router.post('/user/anime/ratings', animeController.getAnimeRatings)
 
 router.get('/avatar/:key', avatarController.getAvatar)
 

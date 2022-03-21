@@ -1,10 +1,10 @@
 module.exports = class RatingDto {
     user;
-    animeId;
+    anime;
     rating;
 
     constructor(model) {
-        this.animeId = model.animeId
+        this.anime = model.anime
         this.user = model.user
         this.rating = model.rating
     }

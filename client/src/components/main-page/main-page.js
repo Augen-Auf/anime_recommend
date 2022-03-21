@@ -20,6 +20,7 @@ const MainPage = () => {
     const [searchQuery, setSearchQuery] = useState('')
     const [page, setPage] = useState(1)
     const [orderObj, setOrderObj] = useState(null)
+    const [userRatings, setUserRatings] = useState([])
 
     const queryInput = useRef('');
 
@@ -32,12 +33,20 @@ const MainPage = () => {
             if (viewed) {
                 setUserViewedList(viewed)
             }
+
+            const {data: {ratings}} = await AnimeService.getUserRatings(store.user.id)
+            setUserRatings(ratings)
         }
     }, [store.user])
 
     useEffect(async () => {
         await loadAnimeList()
     }, [])
+
+    const updateUserRating = async (animeId, rating) => {
+        const {data: {ratings}} = await AnimeService.setUserRating(store.user.id, animeId, rating)
+        setUserRatings(ratings)
+    }
 
 
     const loadAnimeList = async (page=1, query='', order=null) => {
@@ -60,6 +69,8 @@ const MainPage = () => {
         if (viewed) {
             setUserViewedList(viewed)
         }
+        const {data: {ratings}} = await AnimeService.getUserRatings(store.user.id)
+        setUserRatings(ratings)
     }
 
     const resetQuery = async () => {
@@ -76,10 +87,10 @@ const MainPage = () => {
         setPage(1)
         await loadAnimeList(1, searchQuery, orderObj)
     }
-    
+
     const changePage = async (page) => {
-      setPage(page);
-      await loadAnimeList(page, searchQuery, orderObj)
+        setPage(page);
+        await loadAnimeList(page, searchQuery, orderObj)
     }
 
     const searchAnime = async () => {
@@ -152,7 +163,9 @@ const MainPage = () => {
                                                item={anime}
                                                viewed={userViewedList.includes(anime.mal_id)}
                                                saved={userSavedList.includes(anime.mal_id)}
-                                               onAnimeStateChanged={(animeId, list) => updateUserAnimeList(animeId, list)}/>
+                                               rating={userRatings.find(rating => rating.anime === anime.mal_id)?.rating}
+                                               onAnimeStateChanged={(animeId, list) => updateUserAnimeList(animeId, list)}
+                                               onRatingStateChanged={(animeId, rating) => updateUserRating(animeId, rating)}/>
                                 )
                             }
                         </div>

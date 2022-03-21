@@ -74,6 +74,11 @@ class AnimeService {
         if(userAnimeList) {
             userAnimeList[list] = userAnimeList[list].includes(animeId) ?
                 userAnimeList[list].filter(item => item !== animeId) : [...userAnimeList[list], animeId]
+            if(list === 'viewed' && !userAnimeList[list].includes(animeId))
+            {
+                const userAnimeRating = await RatingModel.findOne({user: userId, anime:animeId})
+                userAnimeRating.delete()
+            }
             userAnimeList.save()
 
             return new AnimeDto(userAnimeList)
@@ -86,21 +91,31 @@ class AnimeService {
         }
     }
 
+    async getAnimeRatings(userId) {
+        const userAnimeRatings = await RatingModel.find({user: userId})
+        return {ratings: userAnimeRatings.map(rating => new RatingDto(rating))}
+    }
+
     async setAnimeRating(userId, animeId, rating) {
-        const userAnimeRating = await RatingModel.findOne({user: userId, animeId:animeId})
+        const userAnimeRating = await RatingModel.findOne({user: userId, anime:animeId})
         if(userAnimeRating) {
-            const newUserAnimeRating = {...userAnimeRating, ...{rating}}
-            newUserAnimeRating.save()
-            return new RatingDto(newUserAnimeRating)
+            if(userAnimeRating.rating === rating) {
+                await userAnimeRating.delete()
+            }
+            else {
+                userAnimeRating.rating = rating
+                await userAnimeRating.save()
+            }
         }
         else {
-            const userAnimeRating =  await RatingModel.create({user: userId, animeId, rating})
-            return new AnimeDto(userAnimeRating)
+            await RatingModel.create({user: userId, anime: animeId, rating})
         }
+        const userAnimeRatings = await RatingModel.find({user: userId})
+        return {ratings: userAnimeRatings.map(rating => new RatingDto(rating))}
     }
 
     async getAnimeRecommendations(userId) {
-        const userAnimeRatings = null //await RatingModel.find({user: userId})
+        const userAnimeRatings = await RatingModel.find({user: userId})
         let animeRatings = null
         if(userAnimeRatings && userAnimeRatings.length > 0) {
             animeRatings = {}

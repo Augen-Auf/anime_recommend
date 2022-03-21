@@ -57,8 +57,18 @@ class AnimeController {
     async setAnimeRating(req, res, next) {
         try {
             const { userId, animeId, rating } = req.body
-            const userAnimeRating = await animeService.setAnimeRating(userId, animeId, rating)
-            return res.json(userAnimeRating)
+            const userAnimeRatings = await animeService.setAnimeRating(userId, animeId, rating)
+            return res.json(userAnimeRatings)
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async getAnimeRatings(req, res, next) {
+        try {
+            const { userId } = req.body
+            const userAnimeRatings = await animeService.getAnimeRatings(userId)
+            return res.json(userAnimeRatings)
         } catch (e) {
             next(e)
         }
