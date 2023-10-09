@@ -1,13 +1,11 @@
 module.exports = class AnimeDto {
-    id;
     viewed;
     saved;
-    user;
+    user_id;
 
     constructor(model) {
         this.viewed = model.viewed
-        this.id = model._id
         this.saved = model.saved
-        this.user = model.user
+        this.user_id = model.user_id
     }
 }

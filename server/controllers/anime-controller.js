@@ -23,6 +23,7 @@ class AnimeController {
 
     async getUserAnimeList(req, res, next) {
         try {
+            console.log(req.body)
             const { userId } = req.body
             const userAnimeList = await animeService.getUserAnimeList(userId)
 

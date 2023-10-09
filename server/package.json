@@ -18,15 +18,17 @@
     "express": "^4.17.3",
     "express-validator": "^6.14.0",
     "jsonwebtoken": "^8.5.1",
-    "mal-management-js": "0.0.9",
+    "mal-management-js": "^0.0.9",
     "mongodb": "^4.4.0",
     "mongoose": "^6.2.3",
     "multer": "^1.4.4",
     "multer-s3": "^2.10.0",
+    "pg": "^8.11.3",
+    "sequelize": "^6.33.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "axios": "^0.26.0",
+    "axios": "^0.26.1",
     "nodemon": "^2.0.15"
   }
 }

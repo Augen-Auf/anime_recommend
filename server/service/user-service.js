@@ -1,4 +1,4 @@
-const UserModel = require('../models/user-model')
+const { User } = require('../database/models')
 const tokenService = require('../service/token-service')
 const UserDto = require("../dtos/user-dto")
 const ApiError = require("../exceptions/api-error")
@@ -6,13 +6,13 @@ const bcrypt = require('bcrypt')
 
 class UserService {
     async registration(email, password, username) {
-        const candidate = await UserModel.findOne({email, username})
+        const candidate = await User.findOne({ where: { email, username } })
         if (candidate) {
             throw ApiError.BadRequest('Пользователь с такими данными уже существует')
         }
 
         const hashPassword = await bcrypt.hash(password, 3)
-        const user = await UserModel.create({email, password: hashPassword, username})
+        const user = await User.create({email, password: hashPassword, username})
 
         const userDto = new UserDto(user)
         const tokens = tokenService.generateTokens({...userDto})
@@ -22,7 +22,7 @@ class UserService {
     }
 
     async login(email, password) {
-        const user = await UserModel.findOne({email})
+        const user = await User.findOne({ where: { email } })
         if (!user) {
             throw ApiError.BadRequest('Пользователя не зарегистрирован')
         }
@@ -40,27 +40,28 @@ class UserService {
     }
 
     async updateProfile(id, email, username) {
-        const user = await UserModel.findOne({_id: id})
+        const user = await User.findOne({ where: { id } })
         if (!user) {
             throw ApiError.BadRequest('Пользователя не найден')
         }
-        const newUser = Object.assign(user, {email, username})
-        newUser.save()
+        const newUser = Object.assign(user, { email, username })
+        await newUser.save()
         const userDto = new UserDto(newUser)
-        const tokens = tokenService.generateTokens({...userDto})
+        const tokens = tokenService.generateTokens({ ...userDto })
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
 
-        return { ...tokens, user: userDto}
+        return { ...tokens, user: userDto }
     }
 
     async updatePassword(id, oldPassword, newPassword) {
-        const user = await UserModel.findOne({_id: id})
+        const user = await User.findOne({ where: { id } })
 
         if (!user) {
             throw ApiError.BadRequest('Пользователя не найден')
         }
 
         const isOldPassEquals = await bcrypt.compare(oldPassword, user.password)
+
         if (!isOldPassEquals) {
             throw ApiError.BadRequest('Указанный старый пароль не совпадает с текущим')
         }
@@ -73,17 +74,16 @@ class UserService {
         const hashPassword = await bcrypt.hash(newPassword, 3)
         const newUser = Object.assign(user, {password: hashPassword})
 
-        newUser.save()
+        await newUser.save()
         const userDto = new UserDto(newUser)
-        const tokens = tokenService.generateTokens({...userDto})
+        const tokens = tokenService.generateTokens({ ...userDto })
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
 
-        return { ...tokens, user: userDto}
+        return { ...tokens, user: userDto }
     }
 
     async logout(refreshToken) {
-        const token = tokenService.removeToken(refreshToken)
-        return token
+        return tokenService.removeToken(refreshToken)
     }
 
     async refresh(refreshToken) {
@@ -98,12 +98,15 @@ class UserService {
             throw ApiError.UnauthorizedError()
         }
 
-        const user = await UserModel.findById(userData.id)
+        //console.log(userData)
+
+        const user = await User.findOne({ where: { id: userData.id } })
         const userDto = new UserDto(user)
-        const tokens = tokenService.generateTokens({...userDto})
+        console.log(userDto)
+        const tokens = tokenService.generateTokens({ ...userDto })
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
 
-        return { ...tokens, user: userDto}
+        return { ...tokens, user: userDto }
     }
 }
 

@@ -1,6 +1,5 @@
 const {$anime, $anime_rec_sys, $mal_client_api} = require('../requests/anime')
-const AnimeModel = require('../models/anime-model')
-const RatingModel = require('../models/rating-model')
+const { Anime, Rating } = require('../database/models')
 const AnimeDto = require("../dtos/anime-dto");
 const RatingDto = require("../dtos/rating-dto");
 
@@ -12,7 +11,7 @@ class AnimeService {
             {page},
             query && query.trim() !== '' ? { q: query } : null,
             order && { order_by: order.order, sort: order.sort })
-        console.log(paramsObj)
+        //console.log(paramsObj)
         const { data } = await $anime.get('anime', {params: paramsObj})
         return data
     }
@@ -41,8 +40,15 @@ class AnimeService {
     }
 
     async getUserAnimeList(userId) {
-        const userAnimeList = await AnimeModel.findOne({user: userId})
-        if(userAnimeList) {
+        const userAnimesList = await Anime.findAll({ where: { user_id: userId } })
+        //console.log("anime list", userAnimesList)
+        if(userAnimesList && userAnimesList.length > 0) {
+            const userAnimeList = {
+                user_id: userAnimesList[0].user_id,
+                viewed: userAnimesList.filter(a => a.viewed).map(a => a.anime),
+                saved: userAnimesList.filter(a => a.saved).map(a => a.anime)
+            }
+
             return new AnimeDto(userAnimeList)
         }
         else {
@@ -69,38 +75,50 @@ class AnimeService {
     }
 
     async setUserAnimeList(userId, animeId, list) {
-        const userAnimeList = await AnimeModel.findOne({user: userId})
-        console.log(userAnimeList)
-        if(userAnimeList) {
-            userAnimeList[list] = userAnimeList[list].includes(animeId) ?
-                userAnimeList[list].filter(item => item !== animeId) : [...userAnimeList[list], animeId]
-            if(list === 'viewed' && !userAnimeList[list].includes(animeId))
+        const userAnimeList = await Anime.findAll({ where: { user_id: userId } })
+        const neededAnime = userAnimeList.find(a => a.anime === animeId)
+
+        console.log(userId)
+        console.log(animeId)
+        if(neededAnime)
+        {
+            neededAnime[list] = !neededAnime[list]
+
+            if(list === 'viewed' && !neededAnime[list])
             {
-                const userAnimeRating = await RatingModel.findOne({user: userId, anime:animeId})
-                userAnimeRating.delete()
+                const userAnimeRating = await Rating.findOne({ where: { user_id: userId, anime: animeId } })
+                if(userAnimeRating)
+                    await userAnimeRating.destroy()
             }
-            userAnimeList.save()
 
-            return new AnimeDto(userAnimeList)
+            await  neededAnime.save()
         }
-        else {
-            const newAnimeList = {user: userId, viewed: [], saved: []}
-            const userAnimeList =  await AnimeModel.create({ ...newAnimeList, ...{[list]: [animeId]} })
+        else
+        {
+            let newAnimeRecord = { user_id: userId, anime: animeId }
+            newAnimeRecord = await Anime.create({ ...newAnimeRecord, ...{ [list]: true } })
+            userAnimeList.push(newAnimeRecord)
+        }
 
-            return new AnimeDto(userAnimeList)
-        }
+        return new AnimeDto({
+            user_id: userAnimeList[0].id,
+            viewed: userAnimeList.filter(a => a.viewed).map(a => a.anime),
+            saved: userAnimeList.filter(a => a.saved).map(a => a.anime)
+        })
     }
 
     async getAnimeRatings(userId) {
-        const userAnimeRatings = await RatingModel.find({user: userId})
-        return {ratings: userAnimeRatings.map(rating => new RatingDto(rating))}
+        const userAnimeRatings = await Rating.findAll({ where: { user_id: userId } })
+        return { ratings: userAnimeRatings.map(rating => new RatingDto(rating)) }
     }
 
     async setAnimeRating(userId, animeId, rating) {
-        const userAnimeRating = await RatingModel.findOne({user: userId, anime:animeId})
+        const userAnimeRatings = await Rating.findAll({ where: { user_id: userId } })
+        const userAnimeRating = userAnimeRatings.find(r => r.anime === animeId)
+
         if(userAnimeRating) {
             if(userAnimeRating.rating === rating) {
-                await userAnimeRating.delete()
+                await userAnimeRating.destroy()
             }
             else {
                 userAnimeRating.rating = rating
@@ -108,23 +126,27 @@ class AnimeService {
             }
         }
         else {
-            await RatingModel.create({user: userId, anime: animeId, rating})
+            const newRating = await Rating.create({user_id: userId, anime: animeId, rating})
+            userAnimeRatings.push(newRating)
         }
-        const userAnimeRatings = await RatingModel.find({user: userId})
-        return {ratings: userAnimeRatings.map(rating => new RatingDto(rating))}
+
+        return { ratings: userAnimeRatings.map(rating => new RatingDto(rating)) }
     }
 
     async getAnimeRecommendations(userId) {
-        const userAnimeRatings = await RatingModel.find({user: userId})
+        const userAnimeRatings = await Rating.findAll({ where: { user_id: userId } })
+
         let animeRatings = null
+
         if(userAnimeRatings && userAnimeRatings.length > 0) {
             animeRatings = {}
-            animeRatings = userAnimeRatings.forEach(item => {
-                animeRatings[item.animeId] = item.rating
+            userAnimeRatings.forEach(item => {
+                animeRatings[item.anime] = item.rating
             })
         }
-        const {data} = await $anime_rec_sys.post('make-recommend',
-            Object.assign({ user_id: userId.toString() }, animeRatings && {animeRatings}))
+
+        const { data } = await $anime_rec_sys.post('make-recommend',
+            Object.assign({ user_id: userId.toString() }, animeRatings && { animeRatings }))
 
         const animeItemsList = []
 
@@ -134,7 +156,7 @@ class AnimeService {
             const anime = await this.getMALAnimeById(animeItem)
             animeItemsList.push(anime)
         }
-        return {list: animeItemsList}
+        return { list: animeItemsList }
 
     }
 

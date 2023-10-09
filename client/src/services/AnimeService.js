@@ -10,7 +10,7 @@ export default class AuthService {
     }
 
     static async getUserAnimeList(userId) {
-        return await $api.post('/user/anime/get', {userId})
+        return await $api.post('/user/anime/get', { userId })
     }
     static async getUserAnimeListItems(userId, list, cancelToken) {
         return await $api.post('/anime/user/get', {userId, list}, {cancelToken: cancelToken.token})

@@ -1,5 +1,5 @@
 require('dotenv').config()
-const UserModel = require('../models/user-model')
+const { User }= require('../database/models')
 const s3 = require("../utils/s3")
 const ApiError = require("../exceptions/api-error");
 const UserDto = require("../dtos/user-dto");
@@ -16,19 +16,19 @@ class AvatarService {
     }
 
     async saveAvatarKey(id, key) {
-        const user = await UserModel.findOne({_id: id})
+        const user = await User.findOne({ where: { id } })
         if (!user) {
             throw ApiError.BadRequest('Пользователя не найден')
         }
 
-        const newUser = Object.assign(user, {avatar: key})
-        newUser.save()
+        const newUser = Object.assign(user, { avatar: key })
+        await newUser.save()
 
         const userDto = new UserDto(newUser)
-        const tokens = tokenService.generateTokens({...userDto})
+        const tokens = tokenService.generateTokens({ ...userDto })
         await tokenService.saveToken(userDto.id, tokens.refreshToken)
 
-        return { ...tokens, user: userDto}
+        return { ...tokens, user: userDto }
     }
 }
 

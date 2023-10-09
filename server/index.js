@@ -3,6 +3,7 @@ const express = require("express")
 const cors = require("cors")
 const cookieParser = require("cookie-parser")
 const mongoose = require("mongoose")
+const sequelize = require("./database")
 const router = require('./router')
 
 const errorMiddleware = require("./middlewares/error-middleware")
@@ -21,10 +22,12 @@ app.use(errorMiddleware)
 
 const start = async () => {
     try {
-        await mongoose.connect(process.env.DB_URL, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        })
+        // await mongoose.connect(process.env.DB_URL, {
+        //     useNewUrlParser: true,
+        //     useUnifiedTopology: true
+        // })
+        await sequelize.authenticate()
+        await sequelize.sync()
         app.listen(PORT, () => console.log(`Server started on PORT = ${PORT}`))
     } catch (e) {
         console.log(e)
