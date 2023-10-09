@@ -60,8 +60,8 @@ def train_model(user_id, anime_ratings):
     trainset, testset = train_test_split(data, test_size=0.25)
     predictions = algo.fit(trainset).test(testset)
     print(accuracy.rmse(predictions))
-    # algo.fit(data.build_full_trainset())
-    # pickle.dump(algo, open(filename, 'wb'))
+    algo.fit(data.build_full_trainset())
+    pickle.dump(algo, open(filename, 'wb'))
 
 
 def make_predict(user_id):
